@@ -1,0 +1,4 @@
+date: 1/9/2024
+tags:
+Initially started with a generic interface for read, write, and delete. However, I can't get the
+generic methods to invoke the overriden methods.

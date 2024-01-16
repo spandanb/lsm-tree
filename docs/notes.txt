@@ -1,0 +1,63 @@
+Let's implement a LSM (log-structured merge tree). Sister to the b-tree.
+
+Parts
+------
+- Write Ahead Log (WAL)/Commit Log
+    - append only file; for durability
+- memtable (in-memory binary tree, or another lgn data structure)
+    memtable is after a certain size is flushed to an on-disk sorted datastructure
+    called sstable (sorted string table)
+- sstables are on disk DS which keep sorted lists of stored in levels
+    - after a certain size limit, a compaction is triggered where sstables from
+    lower levels are merged into higher levels, and duplicates are deleted
+- when a read comes, the key is looked up like: (memtable, sstable_0, sstable_1, ...)
+
+
+Milestones
+----------
+- Create a single threaded version
+    - thread is responsible for reading/writing/background-compaction
+
+- Create a multi-threaded version
+    - needs multiple connections to
+
+
+Application vs. Library
+-----------------------
+- An application is run in its own process
+- A library is passive, invoked/used by a process
+    - this would lead to an embedded database/datastore
+- Initially, I can start with a single app; where the datastore and agent are coupled;
+- later, I can consider separating the datastore into a library
+- Library approach: how will state that must be centralized maintained, e.g. lock states on db file, and queue of waiting threads, e.g. for an exclusive lock
+    - shared lock information can be achieved via fctnl
+- the library wouldn't maintain a queue
+- rather, if the application using the db tried to write; the library would try and acquire a lock
+on the file and if there was already another lock on the file; then the invocation would fail
+- - then the application would be responsible for the retry and hence queue logic
+
+- - how could we build a queue, i.e. so locks are aquired in order
+- - solution 1. [distributed] on failed lock, app retries with exponential backoff + jitter
+- - solution 2. [centralized] there is a locks queue file
+    - this could be a separate api
+
+Tasks
+-----
+- data representation and model
+    - what datatypes
+    - how are datatypes serialized
+- storage
+    - model?
+        ordered key-values
+
+
+Code Organization
+-----------------
+There will be 2 code bases:
+- 1. embedded db library(uses lsm tree)
+    - can have multiple threads, e.g. one for main respond to queries
+    - another for background cleaning/compaction tasks
+- 2. agent that emulates client activity
+
+- database initialized with directory on local filesystem
+
