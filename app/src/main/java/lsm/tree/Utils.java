@@ -7,4 +7,9 @@ public class Utils {
         byte[] bytes = ByteBuffer.allocate(Integer.BYTES).putInt(value).array();
         return bytes;
     }
+
+    public static int bytesToInt(byte[] byteArray) {
+        ByteBuffer buffer = ByteBuffer.wrap(byteArray);
+        return buffer.getInt();
+    }
 }

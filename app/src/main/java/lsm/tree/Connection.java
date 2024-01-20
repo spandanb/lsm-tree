@@ -18,8 +18,8 @@ public class Connection {
 
     }
 
-    public KeyAddStatus add(byte[] key, byte[]value) {
-        return KeyAddStatus.Success;
+    public KeyPutStatus put(byte[] key, byte[]value) {
+        return KeyPutStatus.Success;
     }
 
     public  KeyDelStatus del(byte[]key) {

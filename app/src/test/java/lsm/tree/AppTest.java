@@ -9,6 +9,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class AppTest {
     @Test void appHasAGreeting() {
         App classUnderTest = new App();
-        assertNotNull(classUnderTest.getDataDir(), "app should have a greeting");
+        assertNotNull(classUnderTest.DataDir, "app should have a data dir");
     }
 }

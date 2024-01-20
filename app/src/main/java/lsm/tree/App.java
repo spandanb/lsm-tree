@@ -4,16 +4,6 @@
 package lsm.tree;
 
 
-interface MemTableIface {
-    public <K, V> MemTableAddStatus  add(byte[] key, byte[] value);
-    public <K> MemTableDeleteStatus  delete(byte[] key);
-
-    public <K> MemTableFindStatus  find(byte[] key);
-
-}
-
-
-
 public class App {
 
     // task(001)
@@ -24,23 +14,23 @@ public class App {
         StoreConfig config = new StoreConfig(DataDir);
         System.out.println(String.format("Initializing db lib with config: [%s]", config));
 
-        // 2. create connection
-
+        // 2. create connection to datastore
         // the db will eventually be exposed from a library.
         // a library is passive; the requests would come from the application
-        // invoking the library, which we'll call "the client"
-        // drawing inspiration from sqlite, the methods invoked would be
+        // invoking the library.
+        // drawing inspiration from rocksdb, the methods invoked would be
         // open -> opens a connection to db
-        // exec -> execute a statement; perhaps more simply add(key, value), del(key, value), get(key), list
         // close -> close a connection and persist state
+        // put(key, value), del(key, value), get(key), list
 
         // for now, we have one massive storage data structure;
-        // user/app can achieve logical separation by encoding the key like: tree_0.key_0
+        // users/app can achieve logical separation by encoding the key like: table_a.key_0
         // later we can add ability to create separate data structures, comparable to new tree or tables
         Connection conn = new Connection(config);
 
-        // todo: create an emulate_work(conn), that performs various, add, del, get, list ops on db
-
+        // 3. create worker that will use connection
+        StoreWorker worker = new StoreWorker(conn);
+        worker.doWork();
 
     }
 }
